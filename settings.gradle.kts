@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "boilerplate"
+rootProject.name = "GymTraker"
 include(":app")
  
