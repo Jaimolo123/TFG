@@ -1,4 +1,4 @@
-package com.ivandepaz.boilerplate
+package com.oscarjaime.gymtraker
 
 import org.junit.Test
 

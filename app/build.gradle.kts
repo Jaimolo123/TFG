@@ -5,13 +5,13 @@ plugins {
 }
 
 android {
-    namespace = "com.ivandepaz.boilerplate"
+    namespace = "com.oscarjaime.gymtraker"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.ivandepaz.boilerplate"
+        applicationId = "com.oscarjaime.gymtraker"
         minSdk = 29
         targetSdk = 36
         versionCode = 1

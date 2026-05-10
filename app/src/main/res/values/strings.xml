@@ -1,3 +1,4 @@
 <resources>
-    <string name="GymTraker">boilerplate</string>
+    <string name="app_name">GymTraker</string>
+    <string name="dashboard_welcome">Tu progreso de fuerza</string>
 </resources>
