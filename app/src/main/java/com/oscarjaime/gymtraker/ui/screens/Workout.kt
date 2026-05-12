@@ -4,7 +4,9 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
@@ -15,6 +17,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -27,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.oscarjaime.gymtraker.ui.viewmodel.GymTrackerUiState
 import java.time.LocalDate
 
@@ -44,7 +48,7 @@ fun LazyListScope.WorkoutScreen(
     }
     val todaySets = state.userTrainingSets.filter { it.dateMillis.toLocalDate() == LocalDate.now() }
     if (todaySets.isEmpty()) {
-        item { EmptyState("Guarda tu primera serie del dia.") }
+        item { EmptyState("Guarda tu primera serie del día.") }
     } else {
         items(todaySets, key = { it.id }) { set ->
             TrainingSetRow(set)
@@ -54,59 +58,95 @@ fun LazyListScope.WorkoutScreen(
 
 @Composable
 private fun WorkoutForm(onAddTrainingSet: (String, String, String, String) -> Unit) {
-    var exerciseName by remember { mutableStateOf("") }
+    var exerciseName       by remember { mutableStateOf("") }
     var selectedMuscleGroup by remember { mutableStateOf(muscleGroups.last()) }
-    var weight by remember { mutableStateOf("") }
-    var repetitions by remember { mutableStateOf("") }
+    var weight             by remember { mutableStateOf("") }
+    var repetitions        by remember { mutableStateOf("") }
 
     ElevatedCard(
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface)
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 3.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            Text("Anotar marca", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Column {
+                Text(
+                    "Anotar marca",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.ExtraBold,
+                    letterSpacing = (-0.3).sp
+                )
+                Text(
+                    "Ejercicio · Grupo muscular · Peso · Reps",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
             OutlinedTextField(
                 value = exerciseName,
                 onValueChange = { exerciseName = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Ejercicio o maquina") },
+                label = { Text("Ejercicio o máquina") },
+                shape = RoundedCornerShape(10.dp),
                 singleLine = true
             )
-            Row(
-                modifier = Modifier
-                    .horizontalScroll(rememberScrollState())
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                muscleGroups.forEach { muscle ->
-                    FilterChip(
-                        selected = selectedMuscleGroup == muscle,
-                        onClick = { selectedMuscleGroup = muscle },
-                        label = { Text(muscle) }
-                    )
+
+            // Muscle group chips
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    "Grupo muscular",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Medium
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    muscleGroups.forEach { muscle ->
+                        FilterChip(
+                            selected = selectedMuscleGroup == muscle,
+                            onClick = { selectedMuscleGroup = muscle },
+                            label = {
+                                Text(
+                                    muscle,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = if (selectedMuscleGroup == muscle) FontWeight.Bold else FontWeight.Normal
+                                )
+                            },
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                    }
                 }
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedTextField(
                     value = weight,
                     onValueChange = { weight = it },
                     modifier = Modifier.weight(1f),
-                    label = { Text("Kg") },
+                    label = { Text("Peso (kg)") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    shape = RoundedCornerShape(10.dp),
                     singleLine = true
                 )
                 OutlinedTextField(
                     value = repetitions,
                     onValueChange = { repetitions = it.filter { char -> char.isDigit() } },
                     modifier = Modifier.weight(1f),
-                    label = { Text("Reps") },
+                    label = { Text("Repeticiones") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    shape = RoundedCornerShape(10.dp),
                     singleLine = true
                 )
             }
+
             Button(
                 onClick = {
                     onAddTrainingSet(exerciseName, selectedMuscleGroup, weight, repetitions)
@@ -115,9 +155,17 @@ private fun WorkoutForm(onAddTrainingSet: (String, String, String, String) -> Un
                         repetitions = ""
                     }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(12.dp)
             ) {
-                Text("Guardar serie")
+                Text(
+                    "Guardar serie",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.3.sp
+                )
             }
         }
     }
