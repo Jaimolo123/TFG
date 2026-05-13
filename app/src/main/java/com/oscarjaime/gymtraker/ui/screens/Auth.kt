@@ -162,7 +162,7 @@ fun RegisterScreen(
     ) {
         OutlinedTextField(
             value = firstName,
-            onValueChange = { firstName = it },
+            onValueChange = { firstName = it.filter { char -> !char.isDigit() } },
             modifier = Modifier.fillMaxWidth(),
             label = { Text("Nombre") },
             shape = RoundedCornerShape(10.dp),
@@ -171,7 +171,7 @@ fun RegisterScreen(
         Spacer(Modifier.height(8.dp))
         OutlinedTextField(
             value = lastName,
-            onValueChange = { lastName = it },
+            onValueChange = { lastName = it.filter { char -> !char.isDigit() } },
             modifier = Modifier.fillMaxWidth(),
             label = { Text("Apellido") },
             shape = RoundedCornerShape(10.dp),

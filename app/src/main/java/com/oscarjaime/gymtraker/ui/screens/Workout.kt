@@ -88,7 +88,7 @@ private fun WorkoutForm(onAddTrainingSet: (String, String, String, String) -> Un
 
             OutlinedTextField(
                 value = exerciseName,
-                onValueChange = { exerciseName = it },
+                onValueChange = { exerciseName = it.filter { char -> !char.isDigit() }},
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Ejercicio o máquina") },
                 shape = RoundedCornerShape(10.dp),
@@ -129,7 +129,7 @@ private fun WorkoutForm(onAddTrainingSet: (String, String, String, String) -> Un
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedTextField(
                     value = weight,
-                    onValueChange = { weight = it },
+                    onValueChange = { weight = it.filter { char -> char.isDigit() || char == '.' || char == ',' } },
                     modifier = Modifier.weight(1f),
                     label = { Text("Peso (kg)") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
